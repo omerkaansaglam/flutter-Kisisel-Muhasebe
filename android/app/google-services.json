@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "873026430753",
+    "project_id": "kisisel-muhasebe",
+    "storage_bucket": "kisisel-muhasebe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:873026430753:android:f5937aec83d5a103a40060",
+        "android_client_info": {
+          "package_name": "omerkaan.account.account"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "873026430753-s0kcvrgm9c2ei54qhrou9t05sk3vpr47.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCKlPollT_Kw1NhIkB7dynd7lsNSoKDy8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "873026430753-s0kcvrgm9c2ei54qhrou9t05sk3vpr47.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
