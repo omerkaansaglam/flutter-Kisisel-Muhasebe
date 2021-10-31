@@ -8,6 +8,7 @@ import 'package:getwidget/colors/gf_color.dart';
 import 'package:getwidget/components/appbar/gf_appbar.dart';
 import 'package:group_button/group_button.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 import 'package:selfaccount/core/features/account_view/account_view.dart';
 import 'package:selfaccount/core/features/cariler_view/cariler_view.dart';
 import 'package:selfaccount/core/init/helpers/provider/home_viev_extension_provider.dart';
@@ -96,9 +97,9 @@ class _HomeViewState extends State<HomeView> {
       appBar: GFAppBar(
         backgroundColor: GFColors.DARK,
         title: const Text(
-          "aKont",
+          "Kişisel Muhasebe",
           style: TextStyle(
-              color: GFColors.WHITE, fontWeight: FontWeight.bold, fontSize: 30),
+              color: GFColors.WHITE, fontWeight: FontWeight.bold, fontSize: 20),
           textAlign: TextAlign.center,
         ),
         centerTitle: true,
@@ -325,7 +326,6 @@ class _HomeViewState extends State<HomeView> {
                       Padding(
                         padding: const EdgeInsets.only(left: 14, right: 14),
                         child: TextFormField(
-                          obscureText: true,
                           onSaved: (value) {
                             setState(() {
                               priceController.text = value.toString();
@@ -334,6 +334,7 @@ class _HomeViewState extends State<HomeView> {
                           style: const TextStyle(color: GFColors.DARK),
                           controller: priceController,
                           cursorColor: GFColors.DARK,
+                          
                           validator: FormBuilderValidators.required(context,
                               errorText:
                                   "Bu alanın doldurulması gerekmektedir."),
@@ -379,11 +380,21 @@ class _HomeViewState extends State<HomeView> {
                                 if (_formkey.currentState != null &&
                                     _formkey.currentState!.validate()) {
                                   _formkey.currentState!.save();
+
                                   await addGelirOrGider(
                                       _cariName!,
                                       double.parse(priceController.text),
                                       _selectedDate,
-                                      isGelirProvider.gelirOrGider);
+                                      isGelirProvider.gelirOrGider).then((e){
+       final snackBar = SnackBar(content: Text('Kaydedildi'),backgroundColor: GFColors.SUCCESS,);
+
+// Find the ScaffoldMessenger in the widget tree
+// and use it to show a SnackBar.
+ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                                      }).onError((error, stackTrace) {
+
+                                      });
                                 }
                               } else {
                                 showDialog(

@@ -1,7 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="omerkaan.account.account">
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="selfaccount"
+   android:usesCleartextTraffic="true"
+        android:label="Kişisel Muhasebe"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

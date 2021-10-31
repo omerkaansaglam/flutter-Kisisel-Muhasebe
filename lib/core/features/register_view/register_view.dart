@@ -52,11 +52,11 @@ class _RegisterViewState extends State<RegisterView> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const Text(
-                    "aKont",
+                    "Kişisel Muhasebe",
                     style: TextStyle(
                         color: GFColors.WHITE,
                         fontWeight: FontWeight.bold,
-                        fontSize: 70),
+                        fontSize: 30),
                     textAlign: TextAlign.center,
                   ),
                   const Text(

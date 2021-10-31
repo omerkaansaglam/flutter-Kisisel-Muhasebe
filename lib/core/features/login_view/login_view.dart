@@ -49,11 +49,11 @@ class _LoginViewState extends State<LoginView> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const Text(
-                    "aKont",
+                    "Kişisel Muhasebe",
                     style: TextStyle(
                         color: GFColors.WHITE,
                         fontWeight: FontWeight.bold,
-                        fontSize: 70),
+                        fontSize: 30),
                     textAlign: TextAlign.center,
                   ),
                   const Text(
@@ -190,7 +190,9 @@ class _LoginViewState extends State<LoginView> {
                       ),
                       onPressed: () async {
                         myService.isOverlay = true;
-                        _postLogin();
+                        _postLogin().then((value){
+                        myService.isOverlay = false;
+                        });
                       },
                       style: ButtonStyle(
                           foregroundColor:

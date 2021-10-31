@@ -16,7 +16,7 @@ class AccountView extends StatefulWidget {
 
 class _AccountViewState extends State<AccountView> {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
-  String dateNow = DateFormat.yMMMEd('tr_TR').format(DateTime.now());
+  String dateNow = DateFormat('dd-MM-yyy').format(DateTime.now());
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   List<String> gelirNames = [];
@@ -29,7 +29,7 @@ class _AccountViewState extends State<AccountView> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getGelirorGider();
+    getGelirorGider(dateNow);
   }
   @override
   Widget build(BuildContext context) {
@@ -44,22 +44,74 @@ class _AccountViewState extends State<AccountView> {
         width: MediaQuery.of(context).size.width,
         child: Column(
           children: [
-            Text("Tarih : ${dateNow}"),
+             SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.95,
+                        height: MediaQuery.of(context).size.height * 0.05,
+                        child: ElevatedButton(
+                          child: Text(
+                            'Tarih Seç : ${dateNow}',
+                            style: TextStyle(
+                                color: GFColors.WHITE,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          onPressed: () async {
+                            await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime.now(),
+                              selectableDayPredicate: (date) {
+                                // Disable weekend days to select from the calendar
+                                if (date.weekday == 0 || date.weekday == 0) {
+                                  return false;
+                                }
+
+                                return true;
+                              },
+                            ).then((selectDate) {
+                              if (selectDate != null) {
+                                setState(() {
+                                  dateNow = DateFormat('dd-MM-yyyy')
+                                      .format(selectDate);
+
+                                      getGelirorGider(dateNow);
+                                });
+                              }
+                            });
+                          },
+                          style: ButtonStyle(
+                              foregroundColor: MaterialStateProperty.all<Color>(
+                                  GFColors.DARK),
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  GFColors.DARK),
+                              shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                      side: const BorderSide(
+                                          color: GFColors.DARK)))),
+                        ),
+                      ),
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Expanded(child: Text("Gelir")),
-                  Expanded(child: Text("Gider")),
-
+                  Expanded(child: Container(
+                    color: GFColors.INFO,
+                    child: Text("Gelir",style: TextStyle(color: GFColors.WHITE),textAlign: TextAlign.center,))),
+                  Expanded(child: Container(
+                    color: GFColors.DANGER,
+                    child: Text("Gider",style: TextStyle(color: GFColors.WHITE),textAlign: TextAlign.center))),
                 ],
               ),
+              Divider(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Expanded(child: Text("Cari Adları")),
-                  Expanded(child: Text("Fiyatlar")),
-                  Expanded(child: Text("Cari Adları")),
-                  Expanded(child: Text("Fiyatlar")),
+                  Expanded(child: Text("Cari Adları",style: TextStyle(color: GFColors.DARK),textAlign: TextAlign.center)),
+                  Expanded(child: Text("Fiyatlar",style: TextStyle(color: GFColors.DARK),textAlign: TextAlign.center)),
+                  Expanded(child: Text("Cari Adları",style: TextStyle(color: GFColors.DARK),textAlign: TextAlign.center)),
+                  Expanded(child: Text("Fiyatlar",style: TextStyle(color: GFColors.DARK),textAlign: TextAlign.center)),
                 ],
               ),
             Expanded(
@@ -71,8 +123,8 @@ class _AccountViewState extends State<AccountView> {
                       itemBuilder: (BuildContext context,index){
                       return Row(
                         children: [
-                          Expanded(child: Text("${gelirNames[index]}")),
-                          Expanded(child: Text("${gelirPrices[index]}")),
+                          Expanded(child: Text("${gelirNames[index]}",style: TextStyle(color: GFColors.DARK),textAlign: TextAlign.center)),
+                          Expanded(child: Text("${gelirPrices[index]}",style: TextStyle(color: GFColors.DARK),textAlign: TextAlign.center)),
                         ],
                       );
                     }),
@@ -83,8 +135,8 @@ class _AccountViewState extends State<AccountView> {
                       itemBuilder: (BuildContext context,index){
                       return Row(
                         children: [
-                          Expanded(child: Text("${giderNames[index]}")),
-                          Expanded(child: Text("${giderPrices[index]}")),
+                          Expanded(child: Text("${giderNames[index]}",style: TextStyle(color: GFColors.DARK),textAlign: TextAlign.center)),
+                          Expanded(child: Text("${giderPrices[index]}",style: TextStyle(color: GFColors.DARK),textAlign: TextAlign.center)),
                         ],
                       );
                     }),
@@ -109,8 +161,13 @@ class _AccountViewState extends State<AccountView> {
     );
   }
 
-  Future<void> getGelirorGider() async {
-    String dateFormat = DateFormat('dd-MM-yyy').format(DateTime.now());
+  Future<void> getGelirorGider(String dateTimeSelect) async {
+    gelirNames = [];
+    gelirPrices = [];
+    giderNames = [];
+    giderPrices = [];
+    totalGelir = 0;
+    totalGider = 0;
     CollectionReference collectionReferenceGelir = _firebaseFirestore
         .collection('Users')
         .doc(_auth.currentUser?.uid)
@@ -119,7 +176,7 @@ class _AccountViewState extends State<AccountView> {
         .collection('Users')
         .doc(_auth.currentUser?.uid)
         .collection('Gider');
-    await collectionReferenceGelir.doc(dateFormat).get().then((res) {
+    await collectionReferenceGelir.doc(dateTimeSelect).get().then((res) {
       res.data();
       if (res.data()!=null) {
         var datas = jsonDecode(jsonEncode(res.data()));
@@ -138,7 +195,7 @@ class _AccountViewState extends State<AccountView> {
       }
     });
 
-    await collectionReferenceGider.doc(dateFormat).get().then((res) {
+    await collectionReferenceGider.doc(dateTimeSelect).get().then((res) {
       if (res.data()!=null) {
         var datas = jsonDecode(jsonEncode(res.data()));
       Map<String, dynamic> dataInValue = datas;
